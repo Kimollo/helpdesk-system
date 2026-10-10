@@ -68,6 +68,9 @@ public class Ticket {
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.REMOVE)
     private List<TicketComment> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.REMOVE)
+    private List<TicketHistory> history = new ArrayList<>();
+
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 

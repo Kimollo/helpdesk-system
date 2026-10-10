@@ -35,6 +35,7 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final UserRepository userRepository;
     private final TicketAccess ticketAccess;
+    private final TicketHistoryService historyService;
 
     @Transactional
     public TicketResponse create(CreateTicketRequest request, UserPrincipal actor) {
@@ -111,8 +112,10 @@ public class TicketService {
     @Transactional
     public TicketResponse update(Long id, UpdateTicketRequest request, UserPrincipal actor) {
         Ticket ticket = ticketAccess.requireManageable(id, actor);
+        TicketStatus previousStatus = ticket.getStatus();
+        UserAccount previousAssignee = ticket.getAssignee();
 
-        if (request.status() != null && request.status() != ticket.getStatus()) {
+        if (request.status() != null && request.status() != previousStatus) {
             ticket.setStatus(request.status());
             if (request.status() == TicketStatus.RESOLVED || request.status() == TicketStatus.CLOSED) {
                 if (ticket.getResolvedAt() == null) {
@@ -121,6 +124,7 @@ public class TicketService {
             } else {
                 ticket.setResolvedAt(null);
             }
+            historyService.recordStatus(ticket, actor, previousStatus, request.status());
         }
         if (request.priority() != null) {
             ticket.setPriority(request.priority());
@@ -129,9 +133,14 @@ public class TicketService {
             ticket.setCategory(request.category());
         }
         if (request.clearAssignee()) {
-            ticket.setAssignee(null);
-        } else if (request.assigneeId() != null) {
-            ticket.setAssignee(resolveAssignee(request.assigneeId()));
+            if (previousAssignee != null) {
+                ticket.setAssignee(null);
+                historyService.recordAssignment(ticket, actor, ticket.getStatus(), previousAssignee, null);
+            }
+        } else if (request.assigneeId() != null && !request.assigneeId().equals(idOf(previousAssignee))) {
+            UserAccount nextAssignee = resolveAssignee(request.assigneeId());
+            ticket.setAssignee(nextAssignee);
+            historyService.recordAssignment(ticket, actor, ticket.getStatus(), previousAssignee, nextAssignee);
         }
         return ApiMapper.toTicket(ticket);
     }
@@ -143,6 +152,10 @@ public class TicketService {
         }
         Ticket ticket = ticketAccess.requireReadable(id, actor);
         ticketRepository.delete(ticket);
+    }
+
+    private static Long idOf(UserAccount user) {
+        return user == null ? null : user.getId();
     }
 
     private UserAccount resolveAssignee(Long assigneeId) {

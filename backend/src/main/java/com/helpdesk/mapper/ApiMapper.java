@@ -2,8 +2,10 @@ package com.helpdesk.mapper;
 
 import com.helpdesk.domain.Ticket;
 import com.helpdesk.domain.TicketComment;
+import com.helpdesk.domain.TicketHistory;
 import com.helpdesk.domain.UserAccount;
 import com.helpdesk.dto.CommentResponse;
+import com.helpdesk.dto.TicketHistoryResponse;
 import com.helpdesk.dto.TicketResponse;
 import com.helpdesk.dto.UserResponse;
 
@@ -40,6 +42,19 @@ public final class ApiMapper {
                 ticket.getCreatedAt(),
                 ticket.getUpdatedAt(),
                 ticket.getResolvedAt()
+        );
+    }
+
+    public static TicketHistoryResponse toHistory(TicketHistory entry) {
+        return new TicketHistoryResponse(
+                entry.getId(),
+                toUser(entry.getChangedBy()),
+                entry.getChangeType(),
+                entry.getOldStatus(),
+                entry.getNewStatus(),
+                toUser(entry.getOldAssignee()),
+                toUser(entry.getNewAssignee()),
+                entry.getChangedAt()
         );
     }
 

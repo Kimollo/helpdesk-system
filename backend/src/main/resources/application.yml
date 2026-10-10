@@ -1,14 +1,16 @@
 spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
   application:
     name: helpdesk
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/helpdesk}
-    username: ${DATABASE_USERNAME:helpdesk}
-    password: ${DATABASE_PASSWORD:helpdesk}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/helpdesk}
+    username: ${SPRING_DATASOURCE_USERNAME:helpdesk}
+    password: ${SPRING_DATASOURCE_PASSWORD:helpdesk}
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     properties:
       hibernate:
         jdbc:
@@ -23,7 +25,7 @@ server:
 
 app:
   jwt:
-    secret: ${JWT_SECRET:0123456789abcdef0123456789abcdef-helpdesk-local-only}
+    secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
     expiration: 8h
   cors:
     allowed-origins:

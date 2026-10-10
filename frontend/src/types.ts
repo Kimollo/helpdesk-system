@@ -51,6 +51,19 @@ export interface TicketStats {
   total: number;
 }
 
+export type HistoryChangeType = 'STATUS' | 'ASSIGNMENT';
+
+export interface TicketHistoryEntry {
+  id: number;
+  changedBy: User;
+  changeType: HistoryChangeType;
+  oldStatus: TicketStatus;
+  newStatus: TicketStatus;
+  oldAssignee: User | null;
+  newAssignee: User | null;
+  changedAt: string;
+}
+
 export interface Comment {
   id: number;
   body: string;

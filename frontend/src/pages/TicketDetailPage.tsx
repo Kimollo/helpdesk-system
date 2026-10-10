@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api, errorMessage } from '../api/client';
 import { useAuth } from '../auth/AuthContext';
 import { Alert, PriorityBadge, StatusBadge } from '../components/Badges';
+import { Timeline } from '../components/Timeline';
 import { formatWhen, fullName, labelize } from '../lib/format';
 import {
   CATEGORIES,
@@ -11,6 +12,7 @@ import {
   type Comment,
   type PageResponse,
   type Ticket,
+  type TicketHistoryEntry,
   type TicketCategory,
   type TicketPriority,
   type TicketStatus,
@@ -24,6 +26,7 @@ export function TicketDetailPage() {
   const staff = user?.role === 'AGENT' || user?.role === 'ADMIN';
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
+  const [history, setHistory] = useState<TicketHistoryEntry[]>([]);
   const [assignees, setAssignees] = useState<User[]>([]);
   const [status, setStatus] = useState<TicketStatus>('OPEN');
   const [priority, setPriority] = useState<TicketPriority>('MEDIUM');
@@ -42,12 +45,14 @@ export function TicketDetailPage() {
     Promise.all([
       api.get<Ticket>(`/tickets/${id}`),
       api.get<Comment[]>(`/tickets/${id}/comments`),
+      api.get<TicketHistoryEntry[]>(`/tickets/${id}/history`),
     ])
-      .then(([ticketResponse, commentResponse]) => {
+      .then(([ticketResponse, commentResponse, historyResponse]) => {
         if (!active) return;
         const next = ticketResponse.data;
         setTicket(next);
         setComments(commentResponse.data);
+        setHistory(historyResponse.data);
         setStatus(next.status);
         setPriority(next.priority);
         setCategory(next.category);
@@ -87,6 +92,8 @@ export function TicketDetailPage() {
         clearAssignee: assigneeId === '',
       });
       setTicket(response.data);
+      const historyResponse = await api.get<TicketHistoryEntry[]>(`/tickets/${id}/history`);
+      setHistory(historyResponse.data);
     } catch (err) {
       setError(errorMessage(err, 'Could not update the ticket'));
     } finally {
@@ -224,6 +231,7 @@ export function TicketDetailPage() {
                 <p><span className="text-ink-soft">Updated. </span>{formatWhen(ticket.updatedAt)}</p>
               </div>
             )}
+            <Timeline entries={history} />
             {user?.role === 'ADMIN' && (
               <button className="btn-danger w-full" type="button" onClick={removeTicket}>Delete ticket</button>
             )}

@@ -5,10 +5,12 @@ import { useAuth } from '../auth/AuthContext';
 import { PriorityBadge, StatusBadge, Alert } from '../components/Badges';
 import { formatWhen, fullName, labelize } from '../lib/format';
 import {
+  CATEGORIES,
   PRIORITIES,
   STATUSES,
   type PageResponse,
   type Ticket,
+  type TicketCategory,
   type TicketPriority,
   type TicketStats,
   type TicketStatus,
@@ -25,6 +27,7 @@ export function TicketsPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [status, setStatus] = useState<TicketStatus | ''>('');
   const [priority, setPriority] = useState<TicketPriority | ''>('');
+  const [category, setCategory] = useState<TicketCategory | ''>('');
   const [queue, setQueue] = useState<Queue>('');
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -38,7 +41,7 @@ export function TicketsPage() {
 
   useEffect(() => {
     setPage(0);
-  }, [status, priority, queue, debouncedQuery]);
+  }, [status, priority, category, queue, debouncedQuery]);
 
   useEffect(() => {
     let active = true;
@@ -50,6 +53,7 @@ export function TicketsPage() {
           size: 10,
           status: status || undefined,
           priority: priority || undefined,
+          category: category || undefined,
           queue: queue || undefined,
           q: debouncedQuery || undefined,
         },
@@ -70,7 +74,7 @@ export function TicketsPage() {
     return () => {
       active = false;
     };
-  }, [page, status, priority, queue, debouncedQuery]);
+  }, [page, status, priority, category, queue, debouncedQuery]);
 
   useEffect(() => {
     api.get<TicketStats>('/tickets/stats').then((response) => setStats(response.data)).catch(() => setStats(null));
@@ -114,7 +118,7 @@ export function TicketsPage() {
         </div>
       )}
 
-      <div className="panel flex flex-col gap-3 p-4 md:flex-row">
+      <div className="panel flex flex-col gap-3 p-4 md:flex-row md:flex-wrap">
         <input
           className="field"
           placeholder="Search subject or description"
@@ -128,6 +132,10 @@ export function TicketsPage() {
         <select className="field md:max-w-40" value={priority} onChange={(e) => setPriority(e.target.value as TicketPriority | '')}>
           <option value="">All priorities</option>
           {PRIORITIES.map((item) => <option key={item} value={item}>{labelize(item)}</option>)}
+        </select>
+        <select className="field md:max-w-40" value={category} onChange={(e) => setCategory(e.target.value as TicketCategory | '')}>
+          <option value="">All categories</option>
+          {CATEGORIES.map((item) => <option key={item} value={item}>{labelize(item)}</option>)}
         </select>
         {staff && (
           <select className="field md:max-w-44" value={queue} onChange={(e) => setQueue(e.target.value as Queue)}>
