@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: helpdesk
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/helpdesk}
+    username: ${DATABASE_USERNAME:helpdesk}
+    password: ${DATABASE_PASSWORD:helpdesk}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        default_batch_fetch_size: 32
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  port: ${PORT:8081}
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:0123456789abcdef0123456789abcdef-helpdesk-local-only}
+    expiration: 8h
+  cors:
+    allowed-origins:
+      - http://localhost:5173
+      - http://127.0.0.1:5173
+  seed:
+    enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
