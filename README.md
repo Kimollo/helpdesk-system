@@ -1,49 +1,55 @@
-# Helpdesk
+# Enterprise Helpdesk System
 
-Support desk for customers, agents, and administrators. The API never returns JPA entities. Controllers accept and return request and response DTOs, and services own the workflow rules.
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black?style=for-the-badge&logo=vercel)](https://helpdesk-system-snowy.vercel.app)
+[![Backend API](https://img.shields.io/badge/API-Render-46E3B7?style=for-the-badge&logo=render)](https://helpdesk-api-wo8z.onrender.com/health)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-6DB33F?style=for-the-badge&logo=springboot)](https://spring.io)
+[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-4169E1?style=for-the-badge&logo=postgresql)](https://neon.tech)
 
-## Live demo
+A full-stack support desk system designed for customers, support agents, and system administrators. 
 
-Open the desk here: [https://helpdesk-system-snowy.vercel.app](https://helpdesk-system-snowy.vercel.app)
+The architecture strictly decouples persistence from presentation: controllers accept and return request/response **DTOs**, services govern workflow and validation rules, and JPA entities are never exposed across the network boundary.
 
-Sign in with one of the demo accounts below. The first login can take about a minute, because the API on Render's free plan sleeps when nobody is using it.
+---
 
-`https://helpdesk-api-wo8z.onrender.com` is the API the desk calls in the background. Opening that address in a browser returns `Authentication is required`. It is not the app.
+## 🌐 Live Demo & Credentials
 
-## Stack
+* **Frontend Application:** [https://helpdesk-system-snowy.vercel.app](https://helpdesk-system-snowy.vercel.app)
+* **Backend API Base:** `https://helpdesk-api-wo8z.onrender.com` *(Returns 401 Unauthorized directly in browser without a Bearer token)*
 
-- Backend: Java 21, Spring Boot 3.5, Spring Data JPA, Spring Security 6, PostgreSQL, JJWT, SpringDoc
-- Frontend: React 18, Vite, TypeScript, Tailwind CSS, Axios
+> **Note on Render Free Tier:** The backend runs on Render's free tier and spins down when idle. The first sign-in request may take 30–60 seconds while the container initializes. Subsequent requests respond immediately.
 
-Roles are `CUSTOMER`, `AGENT`, and `ADMIN`. Authentication is a stateless JWT bearer token. Customers can only read tickets they opened.
+### Pre-Seeded Demo Accounts
 
-## Demo accounts
+| Role | Email | Password | Permissions |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin@helpdesk.local` | `Admin123!` | Full queue access, user management, status overrides |
+| **Agent** | `agent@helpdesk.local` | `Agent123!` | Ticket assignment, queue processing, status transitions |
+| **Customer** | `customer@helpdesk.local` | `Customer123!` | Open tickets, view personal history |
 
-Seeded on first startup when `app.seed.enabled` is true (the local default).
+---
 
-| Role | Email | Password |
-| --- | --- | --- |
-| Admin | admin@helpdesk.local | Admin123! |
-| Agent | agent@helpdesk.local | Agent123! |
-| Customer | customer@helpdesk.local | Customer123! |
+## 🛠️ Tech Stack & Architecture
 
-## Run locally
+* **Backend:** Java 17/21, Spring Boot 3.5, Spring Data JPA, Spring Security 6, JJWT, SpringDoc OpenAPI, PostgreSQL
+* **Frontend:** React 18, Vite, TypeScript, Tailwind CSS, Lucide React, Axios
+* **Security:** Stateless JWT authentication with role authorization (`ROLE_CUSTOMER`, `ROLE_AGENT`, `ROLE_ADMIN`). Customers are scoped strictly to tickets they originated.
+* **Database Management:** Hibernate updates the schema in the dev and production profiles. The base configuration validates the schema and does not change it.
 
-PostgreSQL must already have a database named `helpdesk` owned by the user `helpdesk`. The API listens on port **8081**. The Vite dev server listens on port **5173** and proxies `/api` to the API.
+---
 
-The default Spring profile is `dev`, which lets Hibernate update the schema. Any other profile validates the schema and does not change it.
+## 💻 Local Setup
 
+### Prerequisites
+* JDK 17 or higher
+* Node.js 18+
+* PostgreSQL running locally on port `5432` with a database named `helpdesk` owned by user `helpdesk`
+
+### 1. Backend Service
 ```bash
 cd backend
+# Linux / macOS
 ./mvnw spring-boot:run
+
+# Windows PowerShell
+.\mvnw.cmd spring-boot:run
 ```
-
-On Windows PowerShell, use `mvnw.cmd spring-boot:run` from `backend`.
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Open http://localhost:5173.
