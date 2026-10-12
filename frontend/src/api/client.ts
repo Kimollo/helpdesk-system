@@ -3,8 +3,10 @@ import type { ApiErrorBody } from '../types';
 
 export const TOKEN_KEY = 'helpdesk.token';
 
+const apiOrigin = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081').replace(/\/$/, '');
+
 export const api = axios.create({
-  baseURL: '/api',
+  baseURL: `${apiOrigin}/api`,
 });
 
 export function setAuthToken(token: string | null) {

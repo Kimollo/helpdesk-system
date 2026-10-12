@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .accessDeniedHandler(restAuthHandlers.accessDeniedHandler()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/health").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/users/**").hasAnyRole("AGENT", "ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/users/**").hasRole("ADMIN")
@@ -68,6 +69,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(corsProperties.allowedOrigins());
+        configuration.setAllowedOriginPatterns(corsProperties.allowedOriginPatterns());
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
         configuration.setExposedHeaders(List.of("Location"));
