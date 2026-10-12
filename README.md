@@ -2,6 +2,12 @@
 
 Support desk for customers, agents, and administrators. The API never returns JPA entities. Controllers accept and return request and response DTOs, and services own the workflow rules.
 
+## Live demo
+
+Open the desk in the browser: [https://helpdesk-system-snowy.vercel.app](https://helpdesk-system-snowy.vercel.app)
+
+Sign in with one of the demo accounts below. The API is [https://helpdesk-api-wo8z.onrender.com](https://helpdesk-api-wo8z.onrender.com). On the free Render plan the API sleeps when idle, so the first login can take about a minute while it wakes up.
+
 ## Stack
 
 - Backend: Java 21, Spring Boot 3.5, Spring Data JPA, Spring Security 6, PostgreSQL, JJWT, SpringDoc
