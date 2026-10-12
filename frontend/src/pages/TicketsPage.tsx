@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api, errorMessage } from '../api/client';
 import { useAuth } from '../auth/AuthContext';
+import { hasRole } from '../auth/roles';
 import { PriorityBadge, StatusBadge, Alert } from '../components/Badges';
 import { formatWhen, fullName, labelize } from '../lib/format';
 import {
@@ -20,7 +21,7 @@ type Queue = '' | 'mine' | 'unassigned' | 'reported';
 
 export function TicketsPage() {
   const { user } = useAuth();
-  const staff = user?.role !== 'CUSTOMER';
+  const staff = hasRole(user?.role, ['AGENT', 'ADMIN']);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [stats, setStats] = useState<TicketStats | null>(null);
   const [page, setPage] = useState(0);

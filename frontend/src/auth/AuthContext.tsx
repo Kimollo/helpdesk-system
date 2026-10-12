@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { api, setAuthToken, TOKEN_KEY } from '../api/client';
 import type { AuthResponse, User } from '../types';
+import { withNormalizedRole } from './roles';
 
 interface RegisterPayload {
   email: string;
@@ -23,7 +24,7 @@ const AuthContext = createContext<AuthState | null>(null);
 function storeSession(response: AuthResponse, setUser: (user: User) => void) {
   localStorage.setItem(TOKEN_KEY, response.token);
   setAuthToken(response.token);
-  setUser(response.user);
+  setUser(withNormalizedRole(response.user));
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -39,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAuthToken(token);
     api
       .get<User>('/auth/me')
-      .then((response) => setUser(response.data))
+      .then((response) => setUser(withNormalizedRole(response.data)))
       .catch(() => {
         localStorage.removeItem(TOKEN_KEY);
         setAuthToken(null);

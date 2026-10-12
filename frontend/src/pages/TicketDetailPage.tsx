@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api, errorMessage } from '../api/client';
 import { useAuth } from '../auth/AuthContext';
+import { hasRole } from '../auth/roles';
 import { Alert, PriorityBadge, StatusBadge } from '../components/Badges';
 import { Timeline } from '../components/Timeline';
 import { formatWhen, fullName, labelize } from '../lib/format';
@@ -23,7 +24,7 @@ export function TicketDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const staff = user?.role === 'AGENT' || user?.role === 'ADMIN';
+  const staff = hasRole(user?.role, ['AGENT', 'ADMIN']);
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [history, setHistory] = useState<TicketHistoryEntry[]>([]);
@@ -232,7 +233,7 @@ export function TicketDetailPage() {
               </div>
             )}
             <Timeline entries={history} />
-            {user?.role === 'ADMIN' && (
+            {hasRole(user?.role, ['ADMIN']) && (
               <button className="btn-danger w-full" type="button" onClick={removeTicket}>Delete ticket</button>
             )}
           </aside>

@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import type { Role } from '../types';
+import { hasRole } from './roles';
 
 export function FullScreenSpinner() {
   return (
@@ -19,7 +20,7 @@ export function ProtectedRoute({ roles, children }: { roles?: Role[]; children: 
   if (!user) {
     return <Navigate to="/login" replace />;
   }
-  if (roles && !roles.includes(user.role)) {
+  if (roles && !hasRole(user.role, roles)) {
     return <Navigate to="/" replace />;
   }
   return children;

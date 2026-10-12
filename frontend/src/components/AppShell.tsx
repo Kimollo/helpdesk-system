@@ -1,6 +1,7 @@
 import { LifeBuoy, LogOut, Plus, Ticket, Users } from 'lucide-react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { hasRole } from '../auth/roles';
 import { fullName, labelize } from '../lib/format';
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
@@ -25,7 +26,7 @@ export function AppShell() {
         <Plus size={16} />
         New ticket
       </NavLink>
-      {user.role === 'ADMIN' && (
+      {hasRole(user.role, ['ADMIN']) && (
         <NavLink to="/admin/users" className={linkClass}>
           <Users size={16} />
           People
