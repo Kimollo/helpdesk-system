@@ -4,9 +4,11 @@ Support desk for customers, agents, and administrators. The API never returns JP
 
 ## Live demo
 
-Open the desk in the browser: [https://helpdesk-system-snowy.vercel.app](https://helpdesk-system-snowy.vercel.app)
+Open the desk here: [https://helpdesk-system-snowy.vercel.app](https://helpdesk-system-snowy.vercel.app)
 
-Sign in with one of the demo accounts below. The API is [https://helpdesk-api-wo8z.onrender.com](https://helpdesk-api-wo8z.onrender.com). On the free Render plan the API sleeps when idle, so the first login can take about a minute while it wakes up.
+Sign in with one of the demo accounts below. The first login can take about a minute, because the API on Render's free plan sleeps when nobody is using it.
+
+`https://helpdesk-api-wo8z.onrender.com` is the API the desk calls in the background. Opening that address in a browser returns `Authentication is required`. It is not the app.
 
 ## Stack
 
