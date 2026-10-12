@@ -33,6 +33,7 @@ app:
       - http://127.0.0.1:5173
     allowed-origin-patterns:
       - https://*.vercel.app
+      - http://localhost:*
   seed:
     enabled: true
 

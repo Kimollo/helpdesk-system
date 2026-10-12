@@ -3,11 +3,10 @@ import type { ApiErrorBody } from '../types';
 
 export const TOKEN_KEY = 'helpdesk.token';
 
-const PRODUCTION_API = 'https://helpdesk-api-wo8z.onrender.com';
-const LOCAL_API = 'http://localhost:8081';
-
-const configured = import.meta.env.VITE_API_BASE_URL?.trim();
-const apiOrigin = (configured || (import.meta.env.PROD ? PRODUCTION_API : LOCAL_API)).replace(/\/$/, '');
+const BASE_URL = import.meta.env.PROD
+  ? 'https://helpdesk-api-wo8z.onrender.com'
+  : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081');
+const apiOrigin = BASE_URL.replace(/\/$/, '');
 
 export const api = axios.create({
   baseURL: `${apiOrigin}/api`,
